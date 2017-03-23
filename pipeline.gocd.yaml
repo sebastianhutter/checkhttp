@@ -1,0 +1,40 @@
+pipelines:
+  Build_tikautofw:
+    group: checkhttp
+    label_template: "${repository[:8]}"
+    materials:
+      repository:
+        git: git@github.com:sebastianhutter/checkhttp.git
+    environment_variables:
+      RANCHER_URL: https://rancher.hutter.cloud:8080
+      # you can get the service id from the api view in rancher
+      SERVICE_ID: 1s10
+    stages:
+      - Build:
+          jobs:
+            build:
+              tasks:
+               - exec:
+                   command: make
+                   arguments:
+                    - build_latest
+               - exec:
+                   command: make
+                   arguments:
+                    - build_commit
+               - exec:
+                   command: make
+                   arguments:
+                    - push_latest
+               - exec:
+                   command: make
+                   arguments:
+                    - push_commit
+      - Deploy:
+          jobs:
+            deploy:
+              tasks:
+               - exec:
+                  command: make
+                  arguments:
+                   - deploy_commit
