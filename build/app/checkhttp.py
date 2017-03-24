@@ -89,7 +89,7 @@ def check_endpoints(endpoints, wait_time):
         logger.info ("Checking endpoint '{}' with url '{}'".format(e.id,e.url))
         e.get_status_code()
 
-    Timer(wait_time, check_endpoints, args=(endpoints,)).start()
+    Timer(int(wait_time), check_endpoints, args=(endpoints,wait_time)).start()
 
 
 # ------------------
