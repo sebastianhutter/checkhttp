@@ -71,6 +71,3 @@
     </table>
   </body>
 </html>
-
-localtz = timezone('Europe/Lisbon')
-dt_aware = localtz.localize(dt_unware)
