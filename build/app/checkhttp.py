@@ -107,7 +107,6 @@ def dashboard():
     else:
         return template('dashboard', endpoints=endpoints)
 
-
 # ------------------
 # main
 # ------------------
@@ -124,8 +123,8 @@ if __name__ == '__main__':
         endpoints = get_endpoints(app_urls, app_config)
         # check all endpoints
         check_endpoints(endpoints, app_config.wait_time)
-
-        run(app, host='localhost', port=app_config.http_port)
+        # start bottle app
+        run(app, host='0.0.0.0', port=int(app_config.http_port))
     except Exception as err:
         logger.error(err)
         traceback.print_exc()
