@@ -1,5 +1,5 @@
 pipelines:
-  Build_tikautofw:
+  Build_checkhttp:
     group: checkhttp
     label_template: "${repository[:8]}"
     materials:
@@ -8,7 +8,7 @@ pipelines:
     environment_variables:
       RANCHER_URL: https://rancher.hutter.cloud:8080
       # you can get the service id from the api view in rancher
-      SERVICE_ID: 1s10
+      SERVICE_ID: unknown
     stages:
       - Build:
           jobs:
