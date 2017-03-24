@@ -16,9 +16,6 @@ class CheckHttpConfig(object):
         # set the loglevel
         self.loglevel = os.getenv('CHECKHTTP_LOGLEVEL','DEBUG')
 
-        # is the app running the http checks
-        self.enable_checks = os.getenv('CHECKHTTP_ENABLE_CHECKS', 'true')
-
         # the url or local file path to the yaml config file with
         # url definitons
         self.yaml_config_file = os.getenv('CHECKHTTP_YAML_FILE', '')
