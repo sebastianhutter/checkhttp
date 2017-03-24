@@ -1,15 +1,24 @@
 FROM python:alpine
 MAINTAINER sebastian hutter <mail@sebastian-hutter.ch>
 
-ADD build/app/requirements.txt /app/requirements.txt
+ADD build/config/requirements.txt /requirements.txt
+
+ENV PYTHONPATH="${PYTHONPATH}:/app"
 
 RUN apk --no-cache add --virtual build-dependencies build-base gcc binutils linux-headers libffi-dev openssl-dev && \
   apk add --no-cache tini libffi && \
-  pip install --upgrade -r /app/requirements.txt && \
+  pip install --upgrade -r /requirements.txt && \
   apk del build-dependencies
 
-ENV PYTHONPATH="${PYTHONPATH}:/app"
+ADD build/config/uwsgi.ini /uwsgi.ini
+ADD build/docker-entrypoint.sh /docker-entrypoint.sh
+
+RUN adduser -D checkhttp \
+  && chmod +x /docker-entrypoint.sh
+
 ADD build/app /app
 
+EXPOSE 8080
+
 ENTRYPOINT ["/sbin/tini", "--"]
-CMD ["/usr/local/bin/python3", "/app/checkhttp.py"]
+CMD ["/bin/sh", "/docker-entrypoint.sh"]
