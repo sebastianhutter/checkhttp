@@ -46,8 +46,9 @@
       <th>URL</th>
       <th>Status</th>
       <th>HTTP Code</th>
-      <th>Last Check</th>
-      <th>Last HTTP Code</th>
+      <th>Response time</th>
+      <th>Previous HTTP Code</th>
+      <th>Previous Response time</th>
     </tr>
     % for e in endpoints:
     % if e.return_state():
@@ -61,11 +62,15 @@
       <td>{{e.id}}</td>
       <td><a href="{{e.url}}">{{e.url}}</a></td>
       <td>{{state}}</td>
-      <td>{{e.return_status_code()}}</td>
-      <td>{{e.return_status_code_time()}}</td>
-      <td>{{e.return_last_status_code()}}</td>
+      <td>{{e.status_code}}</td>
+      <td>{{e.status_code_time}}</td>
+      <td>{{e.last_status_code}}</td>
+      <td>{{e.last_status_code_time}}</td>
     </tr>
     % end
     </table>
   </body>
 </html>
+
+localtz = timezone('Europe/Lisbon')
+dt_aware = localtz.localize(dt_unware)

@@ -73,6 +73,9 @@ def get_endpoints(urls, config):
             # if not we will add the credentials from the environment by default
             if not 'credentials' in e or not 'username' in e['credentials'] or not 'password' in e['credentials']:
                 e['credentials'] = {'username': config.http_user, 'password': config.http_pass}
+            # add the timezone info to the endpoint (to render the correct date/time)
+            e['timezone'] = config.timezone
+            # create an endpoint object
             endpoints.append(Endpoint(**e))
         except:
             logger.warn("Not able to load entrypoint definition for '{}'.".format(e['id']))
@@ -124,7 +127,8 @@ if __name__ == '__main__':
         # check all endpoints
         check_endpoints(endpoints, app_config.wait_time)
         # start bottle app
-        run(app, host='0.0.0.0', port=int(app_config.http_port))
+        #run(app, host='0.0.0.0', port=int(app_config.http_port))
+        run(app, host='localhost', port=9090)
     except Exception as err:
         logger.error(err)
         traceback.print_exc()

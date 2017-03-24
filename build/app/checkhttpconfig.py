@@ -29,3 +29,6 @@ class CheckHttpConfig(object):
 
         # waiting time between requests
         self.wait_time = os.getenv('CHECKHTTP_WAIT_TIME', '60')
+
+        # timezone for the displayed times
+        self.timezone = os.getenv('CHECKHTTP_TIMEZONE', 'Europe/Zurich')

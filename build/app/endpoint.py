@@ -16,6 +16,8 @@ import requests
 import json
 import yaml
 from datetime import datetime
+from dateutil.tz import tzlocal
+
 
 
 class EndpointYamlConfig (object):
@@ -53,7 +55,7 @@ class Endpoint (object):
     """
         represents http endpoint
     """
-    def __init__(self, id, url, request_type="GET", http_codes = [200], credentials = {}, enabled = True, basic_auth = False):
+    def __init__(self, id, url, request_type="GET", http_codes = [200], credentials = {}, enabled = True, basic_auth = False, timezone = "UTC"):
         """
             initialize an url object
         """
@@ -66,9 +68,11 @@ class Endpoint (object):
         self.credentials = credentials
         self.enabled = enabled
         self.last_status_code = None
+        self.last_status_code_time = None
         self.status_code = None
         self.status_code_time = None
         self.basic_auth = basic_auth
+        self.timezone = timezone
 
         # validate paramemters
         if not self.id:
@@ -118,34 +122,14 @@ class Endpoint (object):
                 # save the return value
                 self.last_status_code = self.status_code
                 self.status_code = r.status_code
-                self.status_code_time = datetime.now().time().strftime("%Y-%m-%d %H:%M:%S")
+                self.last_status_code_time = self.status_code_time
+                self.status_code_time = datetime.now(tzlocal()).strftime("%Y-%m-%d %H:%M:%S")
+
             except Exception as exception:
                 logger.warn("Unable to connect to url")
                 pass
         else:
             logger.debug("Url is set to disabled. not executing request")
-
-    def return_status_code(self):
-        """
-            return the statuscode for the url endpoint
-        """
-        if self.status_code:
-            return self.status_code
-
-    def return_last_status_code(self):
-        """
-            return the last statuscode for the url endpoint
-        """
-        if self.last_status_code:
-            return self.last_status_code
-
-    def return_status_code_time(self):
-        """
-            return the time the status was returned from the endpoint
-        """
-        if self.status_code_time:
-            return self.status_code_time
-
 
     def return_state(self):
         """
@@ -164,14 +148,15 @@ class Endpoint (object):
             return the endpoint object as json
         """
         data = {
-            "enabled"           : self.enabled,
-            "id"                : self.id,
-            "url"               : self.url,
-            "request_type"      : self.request_type,
-            "http_codes"        : self.http_codes,
-            "status_code"       : self.status_code,
-            "last_status_code"  : self.last_status_code,
-            "status_code_time"  : self.status_code_time,
-            "state"             : self.return_state()
+            "enabled"               : self.enabled,
+            "id"                    : self.id,
+            "url"                   : self.url,
+            "request_type"          : self.request_type,
+            "http_codes"            : self.http_codes,
+            "status_code"           : self.status_code,
+            "last_status_code"      : self.last_status_code,
+            "status_code_time"      : self.status_code_time,
+            "last_status_code_time" : self.last_status_code_time,
+            "state"                 : self.return_state()
         }
         return data
