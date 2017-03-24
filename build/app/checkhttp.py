@@ -54,14 +54,12 @@ def get_urls(config):
         load yaml config file with urls
     """
 
-    # check if the app needs to run the checks
-    if config.enable_checks.lower() in ['yes', 'true', 1]:
-        try:
-            # load configuration
-            url_configuration = EndpointYamlConfig(config.yaml_config_file)
-            return url_configuration.yaml
-        except:
-            raise FileNotFoundError
+    try:
+        # load configuration
+        url_configuration = EndpointYamlConfig(config.yaml_config_file)
+        return url_configuration.yaml
+    except:
+        raise FileNotFoundError
 
 def get_endpoints(urls, config):
     """
