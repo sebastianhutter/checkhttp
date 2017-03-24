@@ -53,7 +53,7 @@ class Endpoint (object):
     """
         represents http endpoint
     """
-    def __init__(self, id, url, request_type="GET", http_codes = [200], credentials = {}, basic_auth = False, enabled = True):
+    def __init__(self, id, url, request_type="GET", http_codes = [200], credentials = {}, enabled = True, basic_auth = False):
         """
             initialize an url object
         """
@@ -64,11 +64,11 @@ class Endpoint (object):
         self.request_type = request_type.upper()
         self.http_codes = http_codes
         self.credentials = credentials
-        self.basic_auth = basic_auth
         self.enabled = enabled
         self.last_status_code = None
         self.status_code = None
         self.status_code_time = None
+        self.basic_auth = basic_auth
 
         # validate paramemters
         if not self.id:
@@ -84,28 +84,11 @@ class Endpoint (object):
             logger.warn('No expected http codes defined. Set to 200')
             self.http_codes = [200]
 
-        if 'username' in self.credentials:
-            if not self.credentials['username']:
-                logger.warn('No username defined. Disable basic auth for url')
-                self.basic_auth = False
-        else:
-            logger.warn('No username defined. Disable basic auth for url')
-            self.basic_auth = False
-
-        if 'password' in self.credentials:
-            if not self.credentials['password']:
-                logger.warn('No password defined. Disable basic auth for url')
-                self.basic_auth = False
-        else:
-            logger.warn('No password defined. Disable basic auth for url')
-            self.basic_auth = False
-
-        # if proper username and password are defined create a basic auth object
-        if self.basic_auth:
+        # generate basic
+        if self.credentials['username'] and self.credentials['password']:
             self.httpauth = HTTPBasicAuth(self.credentials['username'], self.credentials['password'])
         else:
             self.httpauth = None
-
 
     def get_status_code(self):
         """
@@ -113,17 +96,31 @@ class Endpoint (object):
         """
         if self.enabled:
             try:
-                if self.request_type == 'GET':
-                    r = requests.get(self.url, auth=self.basic_auth)
-                if self.request_type == 'POST':
-                    r = requests.post(self.url, auth=self.basic_auth)
+                # if basic auth is set to true we will start directly with basic auth
+                # if not we gonna test a normal connection first and if a 401 is returned
+                # try again with basic auth
+
+                if not self.basic_auth:
+                    if self.request_type == 'GET':
+                        r = requests.get(self.url)
+                    if self.request_type == 'POST':
+                        r = requests.post(self.url)
+
+                    if r.status_code == 401:
+                        self.basic_auth = True
+
+                if self.basic_auth:
+                    if self.request_type == 'GET':
+                        r = requests.get(self.url, auth=(self.credentials['username'], self.credentials['password']))
+                    if self.request_type == 'POST':
+                        r = requests.post(self.url, auth=(self.credentials['username'], self.credentials['password']))
 
                 # save the return value
                 self.last_status_code = self.status_code
                 self.status_code = r.status_code
-                self.status_code_time = datetime.now().time()
+                self.status_code_time = datetime.now().time().strftime("%Y-%m-%d %H:%M:%S")
             except Exception as exception:
-                logger.warn("Unable to connect to url. Disable URL".format(exception.errno))
+                logger.warn("Unable to connect to url")
                 pass
         else:
             logger.debug("Url is set to disabled. not executing request")
@@ -134,6 +131,21 @@ class Endpoint (object):
         """
         if self.status_code:
             return self.status_code
+
+    def return_last_status_code(self):
+        """
+            return the last statuscode for the url endpoint
+        """
+        if self.last_status_code:
+            return self.last_status_code
+
+    def return_status_code_time(self):
+        """
+            return the time the status was returned from the endpoint
+        """
+        if self.status_code_time:
+            return self.status_code_time
+
 
     def return_state(self):
         """
@@ -147,7 +159,7 @@ class Endpoint (object):
             return False
 
 
-    def return_json(self):
+    def return_json_dict(self):
         """
             return the endpoint object as json
         """
@@ -159,6 +171,7 @@ class Endpoint (object):
             "http_codes"        : self.http_codes,
             "status_code"       : self.status_code,
             "last_status_code"  : self.last_status_code,
+            "status_code_time"  : self.status_code_time,
             "state"             : self.return_state()
         }
-        return json.dumps(data)
+        return data

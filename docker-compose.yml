@@ -1,0 +1,11 @@
+version: '2'
+
+services:
+  checkhttp:
+    build:
+      context: .
+    ports:
+      - 8080:8080
+    env_file: .env
+    volumes:
+      - ./checkhttp.yml:/checkhttp.yml:ro

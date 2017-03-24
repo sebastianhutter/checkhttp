@@ -1,0 +1,11 @@
+---
+
+checkhttp:
+  - id: myhttpendpoint
+    enabled: true
+    url: https://google.com
+    http_codes:
+      - 200
+    credentials:
+      username: myuser
+      password: mypass

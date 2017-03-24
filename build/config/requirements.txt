@@ -1,4 +1,4 @@
 schedule
 requests
 PyYAML
-uwsgi
+bottle

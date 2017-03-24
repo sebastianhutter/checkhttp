@@ -10,7 +10,6 @@ RUN apk --no-cache add --virtual build-dependencies build-base gcc binutils linu
   pip install --upgrade -r /requirements.txt && \
   apk del build-dependencies
 
-ADD build/config/uwsgi.ini /uwsgi.ini
 ADD build/docker-entrypoint.sh /docker-entrypoint.sh
 
 RUN adduser -D checkhttp \
@@ -20,5 +19,6 @@ ADD build/app /app
 
 EXPOSE 8080
 
+USER checkhttp
 ENTRYPOINT ["/sbin/tini", "--"]
 CMD ["/bin/sh", "/docker-entrypoint.sh"]

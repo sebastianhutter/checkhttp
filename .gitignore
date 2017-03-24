@@ -90,3 +90,5 @@ ENV/
 # sublime project
 .sublime-project
 sublime-env.sh
+.env
+checkhttp.yml
