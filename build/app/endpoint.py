@@ -157,7 +157,7 @@ class Endpoint (object):
             "last_status_code"      : self.last_status_code,
             "status_code_time"      : self.status_code_time,
             "last_status_code_time" : self.last_status_code_time,
-            "expected_status_codes" ; self.http_codes,
+            "expected_status_codes" : self.http_codes,
             "state"                 : self.return_state()
         }
         return data
