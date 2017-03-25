@@ -24,6 +24,8 @@ class CheckHttpConfig(object):
         self.http_user = os.getenv('CHECKHTTP_HTTP_USER', '')
         self.http_pass = os.getenv('CHECKHTTP_HTTP_PASS', '')
 
+        # listening ip
+        self.ip = os.getenv('CHECKHTTP_IP', '0.0.0.0')
         # http port for the server
         self.http_port = os.getenv('CHECKHTTP_HTTP_PORT', '8080')
 

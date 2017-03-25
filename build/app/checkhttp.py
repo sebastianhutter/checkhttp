@@ -127,7 +127,7 @@ if __name__ == '__main__':
         # check all endpoints
         check_endpoints(endpoints, app_config.wait_time)
         # start bottle app
-        run(app, host='0.0.0.0', port=int(app_config.http_port))
+        run(app, host=app_config.ip, port=int(app_config.http_port))
     except Exception as err:
         logger.error(err)
         traceback.print_exc()

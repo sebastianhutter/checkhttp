@@ -49,6 +49,7 @@
       <th>Response time</th>
       <th>Previous HTTP Code</th>
       <th>Previous Response time</th>
+      <th>Expected Status Codes</th>
     </tr>
     % for e in endpoints:
     % if e.return_state():
@@ -67,7 +68,7 @@
       <td>{{e.last_status_code}}</td>
       <td>{{e.last_status_code_time}}</td>
       <td>
-        % for s in e.expected_status_codes:
+        % for s in e.http_codes:
             {{s}}&nbsp;
         % end
       </td>
