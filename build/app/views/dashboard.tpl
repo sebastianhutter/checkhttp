@@ -66,6 +66,11 @@
       <td>{{e.status_code_time}}</td>
       <td>{{e.last_status_code}}</td>
       <td>{{e.last_status_code_time}}</td>
+      <td>
+        % for s in e.expected_status_codes:
+            {{s}}&nbsp;
+        % end
+      </td>
     </tr>
     % end
     </table>
