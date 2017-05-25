@@ -55,7 +55,7 @@ class Endpoint (object):
     """
         represents http endpoint
     """
-    def __init__(self, id, url, request_type="GET", http_codes = [200], credentials = {}, enabled = True, basic_auth = False, timezone = "UTC"):
+    def __init__(self, id, url, request_type="GET", http_codes = [200], credentials = {}, enabled = True, basic_auth = False, timezone = "UTC", verify = True):
         """
             initialize an url object
         """
@@ -73,6 +73,7 @@ class Endpoint (object):
         self.status_code_time = None
         self.basic_auth = basic_auth
         self.timezone = timezone
+        self.verify = verify
 
         # validate paramemters
         if not self.id:
@@ -106,9 +107,9 @@ class Endpoint (object):
 
                 if not self.basic_auth:
                     if self.request_type == 'GET':
-                        r = requests.get(self.url)
+                        r = requests.get(self.url, verify=self.verify)
                     if self.request_type == 'POST':
-                        r = requests.post(self.url)
+                        r = requests.post(self.url, verify=self.verify)
 
                     if r.status_code == 401:
                         self.basic_auth = True
@@ -149,6 +150,7 @@ class Endpoint (object):
         """
         data = {
             "enabled"               : self.enabled,
+            "verify"                : self.verify,
             "id"                    : self.id,
             "url"                   : self.url,
             "request_type"          : self.request_type,
