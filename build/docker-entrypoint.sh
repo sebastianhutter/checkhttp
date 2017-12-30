@@ -1,20 +1,5 @@
 #!/bin/bash
 
-function load_secret {
-    # function checks if specified environment variable contains the file path to a docker secret
-    # if so it overwrite the value with the file contents
-
-    # first parameter is the environment variable name 
-    name=${1}
-    # second parameter is the value of the environment variable
-    value=${2}
-
-    # now check if the value equals a file in the container
-    if [ -f "${value}" ]; then
-        export ${name}=$(cat "${value}")
-    fi
-}
-
 CLI_ENV=""
 # if vault is enabled try to access it and get the username and password
 if [ -n "$VAULT_SERVER" ]; then
@@ -33,9 +18,12 @@ if [ -n "$VAULT_SERVER" ]; then
 
 else
   # lets see if we have the username/password specified in a docker secret
-  load_secret CHECKHTTP_HTTP_USER "${CHECKHTTP_HTTP_USER}"
-  load_secret CHECKHTTP_HTTP_PASS "${CHECKHTTP_HTTP_PASS}"
+  if [ -f "${CHECKHTTP_HTTP_USER}" ]; then
+    export CHECKHTTP_HTTP_USER=$(cat "${CHECKHTTP_HTTP_USER}")
+  fi
+  if [ -f "${CHECKHTTP_HTTP_PASS}" ]; then
+    export CHECKHTTP_HTTP_PASS=$(cat "${CHECKHTTP_HTTP_PASS}")
+  fi
 fi
-
 
 exec python checkhttp.py
